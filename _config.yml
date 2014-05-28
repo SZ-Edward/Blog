@@ -1,4 +1,4 @@
-#baseurl: /Blog
+#baseurl: /Blog #use for *.github.io
 baseurl: ""
 markdown: rdiscount
 highlighter: pygments
