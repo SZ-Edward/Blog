@@ -7,7 +7,6 @@ paginate: 8
 safe: false
 
 #站点基础配置
-#pname: Blog
 title: Aurora's Blog
 description: 一个懒惰的程序员，一个热爱生活的人。
 email: aurora (at) aurorawu (dot) com
@@ -22,7 +21,7 @@ nav:
 #  - text: Reading
 #    url: /Blog/books.html
   - text: About
-    url: /contact.html
+    url: /Blog/contact.html
 
 #主题配置
 themes: /themes/violet
