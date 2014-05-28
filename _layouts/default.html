@@ -26,7 +26,7 @@
     <div class="page-wrapper">
         <section class="head" id="violet-head">
             <header class="header" id="violet-header">
-                <h3 class="logo"><a href="{{ site.baseurl }}">{{ site.title }}</a></h3>
+                <h3 class="logo"><a href="{{ site.url }}">{{ site.title }}</a></h3>
             </header>
             <nav class="nav" id="violet-nav">
                 <ul class="nav-list">
@@ -73,7 +73,7 @@
             headImgArr.push("{{ imgsrc.item }}");
         {% endfor %}
         if(headImgArr.length <= 0) {
-            headImgArr = ["{{ site.baseurl }}/themes/violet/images/hdbg03.jpg"];
+            headImgArr = ["/themes/violet/images/hdbg03.jpg"];
             var item = 0;
         } else {
             var item = Math.floor(Math.random() * (headImgArr.length));
