@@ -79,7 +79,7 @@
             var item = Math.floor(Math.random() * (headImgArr.length));
         }
         $("#violet-head").css({
-            "background-image": "url(" + headImgArr[item] + ")"
+            "background-image": "url({{ site.baseurl }}" + headImgArr[item] + ")"
         });
     </script>
     {% if page.comment %}
