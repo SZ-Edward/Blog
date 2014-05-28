@@ -1,8 +1,4 @@
 *.DS_Store
 _site
-<<<<<<< HEAD
 .idea/
-=======
-_posts
-.idea/
->>>>>>> gh-pages
+_posts/
