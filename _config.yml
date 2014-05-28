@@ -22,7 +22,7 @@ nav:
 #  - text: Reading
 #    url: /Blog/books.html
   - text: About
-    url: /Blog/contact.html
+    url: /contact.html
 
 #主题配置
 themes: /themes/violet
