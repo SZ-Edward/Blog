@@ -38,8 +38,8 @@ nav:
     url: /index.html
   - text: Archives
     url: /archives.html
-  - text: Reading
-    url: /books.html
+#  - text: Reading
+#    url: /books.html
   - text: About
     url: /contact.html
 
