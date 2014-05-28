@@ -15,7 +15,7 @@ feed: /atom.xml
 #菜单配置
 nav:
   - text: Home 
-    url: /Blog/_layouts/default.html
+    url: /Blog/index.html
   - text: Archives
     url: /Blog/archives.html
 #  - text: Reading
