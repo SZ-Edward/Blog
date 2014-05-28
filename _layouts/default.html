@@ -26,7 +26,7 @@
     <div class="page-wrapper">
         <section class="head" id="violet-head">
             <header class="header" id="violet-header">
-                <h3 class="logo"><a href="{{ site.url }}">{{ site.title }}</a></h3>
+                <h3 class="logo"><a href="{{ site.baseurl }}">{{ site.title }}</a></h3>
             </header>
             <nav class="nav" id="violet-nav">
                 <ul class="nav-list">
@@ -64,9 +64,9 @@
         </footer>
     </div>
 
-    <script type="text/javascript" src="{{ site.url }}{{ site.themes }}/js/jquery-1.8.3.js"></script>
-    <script type="text/javascript" src="{{ site.url }}{{ site.themes }}/js/jquery-scrollTo.js"></script>
-    <script type="text/javascript" src="{{ site.url }}{{ site.themes }}/js/common.js"></script>
+    <script type="text/javascript" src="{{ site.baseurl }}{{ site.themes }}/js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="{{ site.baseurl }}{{ site.themes }}/js/jquery-scrollTo.js"></script>
+    <script type="text/javascript" src="{{ site.baseurl }}{{ site.themes }}/js/common.js"></script>
     <script type="text/javascript">
         var headImgArr = [];
         {% for imgsrc in site.headimg %}
