@@ -16,13 +16,13 @@ feed: /atom.xml
 #菜单配置
 nav:
   - text: Home 
-    url: /index.html
+    url: /Blog/index.html
   - text: Archives
-    url: /archives.html
+    url: /Blog/archives.html
 #  - text: Reading
-#    url: /books.html
+#    url: /Blog/books.html
   - text: About
-    url: /contact.html
+    url: /Blog/contact.html
 
 #主题配置
 themes: /themes/violet
