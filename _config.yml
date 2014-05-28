@@ -1,6 +1,6 @@
 baseurl: /
 markdown: rdiscount
-pygments: true
+highlighter: pygments
 plugins: ./_plugins
 paginate: 8
 
