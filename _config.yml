@@ -36,3 +36,10 @@ headimg:
 follow:
   - class: fa-weibo
     url: http://weibo.com/aurorawu91
+  - class: fa-twitter
+    url: https://twitter.com/aurorawu91
+
+#评论信息
+disqus:
+  config: true
+  id: disqus_4BwlSmNnTj
