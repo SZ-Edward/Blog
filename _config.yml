@@ -1,4 +1,5 @@
-baseurl: /Blog
+#baseurl: /Blog
+baseurl: ""
 markdown: rdiscount
 highlighter: pygments
 plugins: ./_plugins
