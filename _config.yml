@@ -43,8 +43,9 @@ follow:
 
 #评论信息
 disqus:
-  config: true 
-  id: disqus_4BwlSmNnTj
+  config: true
+  id: aurora 
+  #id: disqus_4BwlSmNnTj
 
 duoshuo:
   config: false
