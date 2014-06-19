@@ -22,7 +22,7 @@ description: Python, module, ImportError
 
     from package_b.b import *
 
-然后在`Python Project`项目路径下运行命令
+然后在`Python Project`项目路径下运行命令：
 
     python package_a/a.py
 
