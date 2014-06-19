@@ -53,7 +53,7 @@ description: Python, module, ImportError
 
 依然还是报错：`ImportError: No module named package_b.b`。难道，python的自定义模块间真的没有办法互相引用？还是我们的思路错了？
 
-再次回到问题的原点，仔细分析两条报错语句`ImportError: No module named package_b.b`和`ValueError: Attempted relative import in non-package`，我在[stackoverflow](http://stackoverflow.com/)上找到了答案，详见[Attempted relative import in non-package even with __init__.py](http://stackoverflow.com/questions/11536764/attempted-relative-import-in-non-package-even-with-init-py)，原来问题出在我们没有用模块的方式来运行命令。接着在`Python Project`项目路径下运行命令：
+再次回到问题的原点，仔细分析两条报错语句`ImportError: No module named package_b.b`和`ValueError: Attempted relative import in non-package`，我在[stackoverflow](http://stackoverflow.com/)上找到了答案，详见[Attempted relative import in non-package even with __init__.py](http://stackoverflow.com/questions/11536764/attempted-relative-import-in-non-package-even-with-init-py)，原来问题出在###我们没有用模块的方式来运行命令###。接着在`Python Project`项目路径下运行命令：
 
     python -m package_a.a
 
