@@ -16,6 +16,6 @@ description: Linux, Unix, lsof
 
 根据进程ID（PID）找到文件路径：
 
-lsof -p PID
+    lsof -p PID
 
 更多用法猛戳[10 lsof command usages with example – Unix/Linux](http://crybit.com/lsof-command-usages/)
