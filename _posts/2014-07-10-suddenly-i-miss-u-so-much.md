@@ -6,6 +6,7 @@ description: miss you
 矫情了呵～听到五月天的这首歌，脑子里有点过电影的感觉。
 
 ---
+五月天 －－ [突然好想你](http://www.xiami.com/song/3381901?from=similar_song)
 
 最怕空气突然安静 最怕朋友突然的关心 
 
