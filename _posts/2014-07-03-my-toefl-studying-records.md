@@ -165,3 +165,14 @@ description: 托福, 学习, toefl, 记录
 
 
 ---
+
+
+2014年7月19日进程：
+
+1.  记忆《21天托福核心词汇》中unit 2的词汇。
+
+2.  看toefl offical guide，学习了解Reading section的题型。
+
+
+---
+
