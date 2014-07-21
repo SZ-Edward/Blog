@@ -8,3 +8,6 @@ description: Mysql, reset, auto_increment
     ALTER TABLE tablename AUTO_INCREMENT = 1;
 
 即可。
+
+--EOF--
+

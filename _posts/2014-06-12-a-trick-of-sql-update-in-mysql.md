@@ -14,3 +14,5 @@ description: Mysql, UPDATE, WHERE SELECT, bug, trick
 那么怎么解决这个问题呢？Trick来了，在UPDATE的WHERE里面用临时表来替换一下就可以了，于是修改下**UPDATE**语句：
     `UPDATE A SET x=1 WHERE y IN (SELECT t.y FROM (SELECT * FROM A) t WHERE t.z != 0)`
 就可以执行成功了。
+
+--EOF--

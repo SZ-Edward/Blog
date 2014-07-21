@@ -19,3 +19,6 @@ description: Linux, Unix, lsof
     lsof -p PID
 
 更多用法猛戳[10 lsof command usages with example – Unix/Linux](http://crybit.com/lsof-command-usages/)
+
+--EOF--
+
