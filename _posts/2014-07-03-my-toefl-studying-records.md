@@ -1043,3 +1043,19 @@ description: 托福, 学习, toefl, 记录
 
 
 ---
+
+
+2014年10月8日进程：
+
+1.  用「扇贝单词」听写托福词汇：300个单词。
+
+2.  横听版听力训练：TPO26-L2，目前是生物学。
+
+3.  TPO17 Reading Section测试。
+
+4.  Speaking Section task1练习。 
+
+5.  Speaking Section task3/4/5/6模板。
+
+
+---
