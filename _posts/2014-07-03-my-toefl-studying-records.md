@@ -1063,3 +1063,17 @@ description: 托福, 学习, toefl, 记录
 
 
 ---
+
+
+2014年10月9日进程：
+
+1.  用「扇贝单词」听写托福词汇：300个单词。
+
+2.  横听版听力训练：TPO13-L3，TPO15-L3，TPO16-L2，TPO16-L4，目前是文学艺术。
+
+3.  TPO18 Reading Section测试。
+
+4.  Speaking Section task1/2练习。
+
+5.  用「百词斩」听写四级词汇：100个单词。
+
