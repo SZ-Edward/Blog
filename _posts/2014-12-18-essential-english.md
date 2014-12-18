@@ -38,7 +38,7 @@ description: Essential, English, note
 
     7.  Writing an opinion sentence --Writing the opinion and containing the general ideas you're going to write about.
 
-        The easiest thing to do is to write the opinion and then write because. After because, write your general ideas.
+            The easiest thing to do is to write the opinion and then write because. After because, write your general ideas.
 
     8.  Developing your outline.
 
@@ -64,6 +64,16 @@ description: Essential, English, note
     
     9.  Writing the rough draft.
  
+    10.  The first paragraph --Starting to describe the situation that has caused you to write the paper.
+
+    11.  The main part of the paper --Stating the general ideas, developing them into sentences.
+
+    12.  Ending the paper --Writing a short conclusion, a sentence or two to summarize what you've been saying.
+
+        Simply reminding your reader of your opinion and then stop.
+
+    13.  Reviewing your paper --You have finished the paper, congrats! 
+
 
 
 --EOF--
