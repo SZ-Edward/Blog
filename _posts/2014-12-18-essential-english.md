@@ -70,7 +70,7 @@ description: Essential, English, note
 
     12.  Ending the paper --Writing a short conclusion, a sentence or two to summarize what you've been saying.
 
-        Simply reminding your reader of your opinion and then stop.
+             Simply reminding your reader of your opinion and then stop.
 
     13.  Reviewing your paper --You have finished the paper, congrats! 
 
