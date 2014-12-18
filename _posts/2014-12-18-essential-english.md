@@ -20,7 +20,7 @@ description: Essential, English, note
 
     4.  Your topic --Confirming what you're writing about.
 
-    5.  Coming up with ideas
+    5.  Coming up with ideas --List in the paper.
 
         *  What aspects of the topic are important?
 
@@ -33,6 +33,37 @@ description: Essential, English, note
         *  In what instance does the topic have most important for other people?
 
         *  Why is the topic interesting to other people?
+
+    6.  Analyzing the ideas --Classifying the general ideas and the specific ideas.
+
+    7.  Writing an opinion sentence --Writing the opinion and containing the general ideas you're going to write about.
+
+        The easiest thing to do is to write the opinion and then write because. After because, write your general ideas.
+
+    8.  Developing your outline.
+
+            Opinion sentence
+
+            First general idea
+
+                a. specific idea
+                b. specific idea
+                c. specific idea
+        
+            Second general idea
+
+                a. specific idea
+                b. specific idea
+                c. specific idea        
+
+            Third general idea
+
+                a. specific idea
+                b. specific idea
+                c. specific idea
+    
+    9.  Writing the rough draft.
+ 
 
 
 --EOF--
