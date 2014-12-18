@@ -7,17 +7,20 @@ description: Essential, English, note
 
 ###Free writing before getting started
 
-    1.  "Free writing" means that writing freely about whatever comes into your mind for a specific time period, and writing as much as you can in the time you have.
-    
-    2.  Your purpose --Knowing the reason why you're writing.
+    "Free writing" means that writing freely about whatever comes into your mind for a specific time period, and writing as much as you can in the time you have.
+   
+ 
+###Getting started
 
-    3.  Focused free writing --You should write something that relate to one idea.
+    1.  Your purpose --Knowing the reason why you're writing.
 
-    4.  The reader --Knowing who you're writing to, just like you're talking with someone.
+    2.  Focused free writing --You should write something that relate to one idea.
 
-    5.  Your topic --Confirming what you're writing about.
+    3.  The reader --Knowing who you're writing to, just like you're talking with someone.
 
-    6.  Coming up with ideas
+    4.  Your topic --Confirming what you're writing about.
+
+    5.  Coming up with ideas
 
         *  What aspects of the topic are important?
 
