@@ -44,11 +44,42 @@ description: Tornado, doc
         + `RequestHandler.clear()`：重置这个response中的所有headers和content。
         + `RequestHandler.data_received(chunk)`：实现此方法来处理request流数据，需要`stream_request_body`装饰器。
     * Cookies
+        + `RequestHandler.cookies`：是`self.request.cookies`的别名。
+        + `RequestHandler.get_cookie()`：根据给定的cookie name获取对应的值，否则为默认值。
+        + `RequestHandler.set_cookie()`：根据给定的options设置给定的cookie name/value对。
+        + `RequestHandler.clear_cookie(name, path='/', domain=None)`：根据给定的cookie name删除cookie。由于cookie协议的限制，必须传递在设置cookie时的相同path和domain来清除cookie，但是在服务器上是无法找出哪些值是属于给定的cookie。
+        + `RequestHandler.clear_all_cookies(path='/', domain=None)`：删除用户用request发送的所有cookie，查看`clear_cookie`方法有更多关于path和domain参数的信息。
+        + `RequestHandler.get_secure_cookie(name, value=None, max_age_days=31, min_version=None)`：验证通过返回指定的cookie否则为空，解码的cookie值是一个byte string（不同于`get_cookie`）。
+        + `RequestHandler.set_secure_cookie(name, value, expires_days=30, version=None, **kwargs)`：给cookie加签名和时间戳，以防伪造。必须在`Application`的setting中指定`cookie_secret`参数。此参数是一个长的、随机byte序列，用来制作HMAC加密签名。要读取用此方法设置的cookie，请使用`get_secure_cookie()`。注意，`expires_days`参数用来设置cookie在浏览器中的生命周期，但是它与`get_secure_cookie()`的`max_age_days`参数无关。加密的cookie可能包含随意的byte值，而不仅仅是unicode string（不同于普通的cookie）。
+        + `RequestHandler.create_signed_value(name, value, version=None)`：给cookie加签名和时间戳，以防伪造。一般用在`set_secure_cookie()`，但是也作为非cookie用途的一种方法来使用。要解码不作为cookie存储的值，须使用`get_secure_cookie()`方法的可选值的参数。
+        + `tornado.web.MIN_SUPPORTED_SIGNED_VALUE_VERSION = 1`：此版本的Tornado支持最旧版本的签名值的版本号。比此版本号还旧的签名值无法解码。
+        + `tornado.web.MAX_SUPPORTED_SIGNED_VALUE_VERSION = 2`：此版本的Tornado支持最新版本的签名值的版本号。比此版本号还新的签名值无法解码。
+        + `tornado.web.DEFAULT_SIGNED_VALUE_VERSION = 2`：用`RequestHandler.create_signed_value()`方法产生的签名值的版本号，可以传递`version`关键参数来重写。
+        + `tornado.web.DEFAULT_SIGNED_VALUE_MIN_VERSION = 1`：`RequestHandler.get_secure_cookie()`方法接受的最旧版本的签名值，可以传递`min_version`关键参数来重写。
+    * 其他
+        + `RequestHandler.application`：`Application`对象服务于request。
+        + `RequestHandler.check_etag_header()`：检查`Etag` header是否与request[`If-None-Match`](http://en.wikipedia.org/wiki/HTTP_ETag)不同，如果request的`Etag`匹配则返回`True`和304状态码。当request结束时该方法自动调用，但是应用也可更早调用来重写`compute_etag`方法，并在完成request前更早进行`If-None-Match`检查。在调用此方法前应设置`Etag` header（可以用`set_etag_header`方法）。
+        + `RequestHandler.check_xsrf_cookie()`：验证`_xsrf` cookie与`_xsrf`参数的匹配。为阻止伪造跨站request，须设置`_xsrf` cookie和所有`POST` request里包含相同值的非cookie field。如果这两者不匹配，Tornado认为是潜在的伪造，拒绝表单提交。`_xsrf`值可以设置在name为`_xsrf`的任一表单field，或一个自定义的name为`X-XSRFToken`或`X-CSRFToken`的HTTP header（后者与Django兼容）。之前的Tornado 1.1.1版本，如果HTTP header中存在`X-Requested-With: XMLHTTPRequest`，此方法检查被忽略。这个异常显示为不安全的，已经被清除，更多信息请看[http://www.djangoproject.com/weblog/2011/feb/08/security/](http://www.djangoproject.com/weblog/2011/feb/08/security/)和[http://weblog.rubyonrails.org/2011/2/8/csrf-protection-bypass-in-ruby-on-rails](http://weblog.rubyonrails.org/2011/2/8/csrf-protection-bypass-in-ruby-on-rails)。
+        + `RequestHandler.compute_etag()`：计算用在request的`Etag` header，默认用内容的hash来写。可以重写来自定义etag的实现方法，或返回空来禁用Tornado的默认etag支持。
+        + `RequestHandler.create_template_loader(template_path)`：根据给定的路径来返回一个新的template加载器。可以用子类重写，默认根据给定的路径返回基于目录的加载器，在`Application`的setting里用`autoescape`参数设置。如果`Application`的setting设置了`template_loader`，则用它代替。
+        + `RequestHandler.current_user`：request的已认证用户。这是`get_current_user()`方法的缓存版本，你可以重写方法来设置用户基于其他方式认证，例如cookie。如果没有重写前述方法，此方法通常返回空。第一次调用此方法时，Tornado懒加载当前用户，之后便缓存结果。
+        + `RequestHandler.get_browser_locale(default='en_US')`：由`Accept-Language` header决定用户的位置。可见[14.4 Accept-Language](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4)。
+        + `RequestHandler.get_current_user()`：重写方法来决定当前用户，例如从cookie里。
+        + `RequestHandler.get_login_url()`：重写方法来自定义基于request的登录URL，默认用`Application`的setting里的`login_url`。
+        + `RequestHandler.get_status()`：返回response的状态码。
+        + `RequestHandler.get_template_path()`：重写方法来自定义每个handler的template路径。默认用`Application`的setting里的`template_path`，加载相对调用文件的template返回空。
+        + `RequestHandler.get_user_locale()`：重写方法来决定已认证用户的位置。如果已经返回了空，Tornado返回到`get_browser_locale()`。此方法应该返回`tornado.locale.Locale`对象，最可能通过像调用`tornado.locale.get("en")`获得。
+        + `RequestHandler.log_exception(typ, value, tb)`：重写方法来自定义未捕获异常的日志。默认记录`HTTPError`的实例作为警告，而不跟踪stack（在`tornado.general`日志）。同时所有其他的异常作为跟踪stack的错误（在`tornado.application`日志）。
+        + `RequestHandler.on_connection_close()`：如果客户端关闭了连接，在异步的handler中调用，重写方法来清除与长连接相关的资源。注意调用此方法只在异步化期间连接被关闭的情况，如果需要在每个request后清除，可重写`on_finish()`。在客户端关闭后，代理可保持一个连接开启一段时间（也许是无限期），所以，用户最后关闭了连接后，此方法可能不会被及时调用。
+        + `RequestHandler.require_setting(name, feature='this feature')`：如果给定的`Application`的setting没有定义，抛出一个异常。
+        + `RequestHandler.reverse_url(name, *args)`：`Application.reverse_url`的别名。
+        + `RequestHandler.set_etag_header()`：用`self.compute_etag()`设置response的`Etag` header。注意，如果没有设置header，`compute_etag()`返回空。当request结束时，此方法自动调用。
+        + `RequestHandler.settings`：`self.application.settings`的别名。
+        + `RequestHandler.static_url(path, include_host=None, **kwargs)`：根据给定的静态文件相对路径返回静态的URL。此方法需要在`Application`的setting设置`static_path`参数（指定静态文件的根目录）。此方法返回一个版本url（默认附加在`?v=<signature>`），这样允许静态文件无限期缓存，默认可通过传递`include_version=False`来禁用（其他静态文件实现不需要支持此方法，他们可能需要支持其他的选项）。默认此方法返回当前主机的相对路径，但是如果`include_host`为`true`，则将返回绝对路径。如果handler有`include_host`属性，属性值将被默认为所有`static_url`调用，而不会作为关键参数传递给`include_host`。
+        + `RequestHandler.xsrf_form_html()`：一个HTML `input`元素包括在所有`POST`表单里。此方法定义了`_xsrf`的`input`值，Tornado检查所有`POST` request以防止伪造的跨站request。如果在`Application`的setting里设置了`xsrf_cookies`参数，所有的HTML表单必须要包括此HTML。在一个template里，此方法应用`{% module xsrf_form_html() %}`调用。更多信息见[`check_xsrf_cookie()`](http://tornado.readthedocs.org/en/stable/web.html#tornado.web.RequestHandler.check_xsrf_cookie)。
+        + `RequestHandler.xsrf_token`：当前用户（会话）的XSRF-prevention token。为阻止伪造跨站request，须设置`_xsrf` cookie和所有`POST` request里包含相同`_xsrf`值的一个参数。如果这两者不匹配，Tornado认为是潜在的伪造，拒绝表单提交。可见[Cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery)。
+    * Application configuration
         
-- ###tornado.template - Flexible output generation
-- ###tornado.escape - Escaping & string manipulation
-- ###tornado.locale - Internationalization support
-- ###tornado.websocket - Bidirectional communication to the browser
 
 
 --EOF--
