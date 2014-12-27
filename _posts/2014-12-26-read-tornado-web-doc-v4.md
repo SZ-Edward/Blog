@@ -76,7 +76,7 @@ description: Tornado, Web framework, tornado.web, document
         + `RequestHandler.set_etag_header()`：用`self.compute_etag()`设置response的`Etag` header。注意，如果没有设置header，`compute_etag()`返回空。当request结束时，此方法自动调用。
         + `RequestHandler.settings`：`self.application.settings`的别名。
         + `RequestHandler.static_url(path, include_host=None, **kwargs)`：根据给定的静态文件相对路径返回静态的URL。此方法需要在`Application`的setting设置`static_path`参数（指定静态文件的根目录）。此方法返回一个版本url（默认附加在`?v=<signature>`），这样允许静态文件无限期缓存，默认可通过传递`include_version=False`来禁用（其他静态文件实现不需要支持此方法，他们可能需要支持其他的选项）。默认此方法返回当前主机的相对路径，但是如果`include_host`为`true`，则将返回绝对路径。如果handler有`include_host`属性，属性值将被默认为所有`static_url`调用，而不会作为关键参数传递给`include_host`。
-        + `RequestHandler.xsrf_form_html()`：一个HTML `input`元素包括在所有`POST`表单里。此方法定义了`_xsrf`的`input`值，Tornado检查所有`POST` request以防止伪造的跨站request。如果在`Application`的setting里设置了`xsrf_cookies`参数，所有的HTML表单必须要包括此HTML。在一个template里，此方法应用`{% module xsrf_form_html() %}`调用。更多信息见[`check_xsrf_cookie()`](http://tornado.readthedocs.org/en/stable/web.html#tornado.web.RequestHandler.check_xsrf_cookie)。
+        + `RequestHandler.xsrf_form_html()`：一个HTML `input`元素包括在所有`POST`表单里。此方法定义了`_xsrf`的`input`值，Tornado检查所有`POST` request以防止伪造的跨站request。如果在`Application`的setting里设置了`xsrf_cookies`参数，所有的HTML表单必须要包括此HTML。在一个template里，此方法应用`{{%% module xsrf_form_html() %%}}`调用。更多信息见[`check_xsrf_cookie()`](http://tornado.readthedocs.org/en/stable/web.html#tornado.web.RequestHandler.check_xsrf_cookie)。
         + `RequestHandler.xsrf_token`：当前用户（会话）的XSRF-prevention token。为阻止伪造跨站request，须设置`_xsrf` cookie和所有`POST` request里包含相同`_xsrf`值的一个参数。如果这两者不匹配，Tornado认为是潜在的伪造，拒绝表单提交。可见[Cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery)。
     * 应用设置
         + `tornado.web.Application(handlers=None, default_host='', transforms=None, **settings)`：组成一个web应用的request handler集合。这个类的实例可以调用，直接传递给HTTP服务器来服务于web应用。
@@ -100,7 +100,7 @@ description: Tornado, Web framework, tornado.web, document
                     * `xsrf_cookie_version`：控制服务器产生的新的XSRF cookie的版本。通常是默认（支持的最高版本），但是在版本过渡时期，可能临时设置一个更低的值。这是Tornado 3.2.2的新特性。
                     * `twitter_consumer_key`/`twitter_consumer_secret`/`friendfeed_consumer_key`/`friendfeed_consumer_secret`/`google_consumer_key`/`google_consumer_secret`/`facebook_api_key`/`facebook_secret`：在`tornado.auth`模块用来认证不同的API。
                 3. Template设置
-                    * `autoescape`：控制template的自动转义。可设置为空来禁用转义，或者设定一个所有的输出都会传递的函数名。默认是`xhtml_escape`，可用在每个template的基础上用`{% autoescape %}`命令改变。
+                    * `autoescape`：控制template的自动转义。可设置为空来禁用转义，或者设定一个所有的输出都会传递的函数名。默认是`xhtml_escape`，可用在每个template的基础上用`{{%% autoescape %%}}`命令改变。
                     * `compiled_template_cache`：默认此参数值为`True`，如果为`False`，template将对每个request重编译。此选项是Tornado 3.2的新特性，之前的功能实现是通过`debug`参数设定的。
                     * `template_path`：目录包含template文件，也可以重写`RequestHandler.get_template_path`来实现自定义。
                     * `template_loader`：指定一个`tornado.template.BaseLoader`实例以实现自定义template的加载。如果此项设置已使用，可忽略`autoescape`和`template_path`设置，也可以重写`RequestHandler.create_template_loader`来实现自定义。
