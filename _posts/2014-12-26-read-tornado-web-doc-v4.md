@@ -78,8 +78,60 @@ description: Tornado, Web framework, tornado.web, document
         + `RequestHandler.static_url(path, include_host=None, **kwargs)`：根据给定的静态文件相对路径返回静态的URL。此方法需要在`Application`的setting设置`static_path`参数（指定静态文件的根目录）。此方法返回一个版本url（默认附加在`?v=<signature>`），这样允许静态文件无限期缓存，默认可通过传递`include_version=False`来禁用（其他静态文件实现不需要支持此方法，他们可能需要支持其他的选项）。默认此方法返回当前主机的相对路径，但是如果`include_host`为`true`，则将返回绝对路径。如果handler有`include_host`属性，属性值将被默认为所有`static_url`调用，而不会作为关键参数传递给`include_host`。
         + `RequestHandler.xsrf_form_html()`：一个HTML `input`元素包括在所有`POST`表单里。此方法定义了`_xsrf`的`input`值，Tornado检查所有`POST` request以防止伪造的跨站request。如果在`Application`的setting里设置了`xsrf_cookies`参数，所有的HTML表单必须要包括此HTML。在一个template里，此方法应用`{% module xsrf_form_html() %}`调用。更多信息见[`check_xsrf_cookie()`](http://tornado.readthedocs.org/en/stable/web.html#tornado.web.RequestHandler.check_xsrf_cookie)。
         + `RequestHandler.xsrf_token`：当前用户（会话）的XSRF-prevention token。为阻止伪造跨站request，须设置`_xsrf` cookie和所有`POST` request里包含相同`_xsrf`值的一个参数。如果这两者不匹配，Tornado认为是潜在的伪造，拒绝表单提交。可见[Cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery)。
-    * Application configuration
-        
+    * 应用设置
+        + `tornado.web.Application(handlers=None, default_host='', transforms=None, **settings)`：组成一个web应用的request handler集合。这个类的实例可以调用，直接传递给HTTP服务器来服务于web应用。
+            * 这个类的构造器含有`URLSpec`对象的列表或（正则、request类）tuple，当Tornado接收到request，会按序迭代列表，并实例化正则与request路径匹配的第一个request类的实例。这个request类可指定为任一类对象或（全限定）名称。每个tuple包含额外的元素，对应`URLSpec`构造器的参数（在Tornado 3.2前的版本只允许2个或3个元素的tuple）。
+            * 一个dictionary将是handler构造器和`RequestHandler.initialize`的一个关键参数，被当作第三个元素传递给tuple。此模式用在`StaticFileHandler`例子中，如果设置了static_path参数，`StaticFileHandler`将自动安装。
+            * Tornado用`add_handlers`方法支持虚拟主机，第一个参数是主机的正则表达式。可以设置static_path这个关键参数来使用静态文件，Tornado通过`/static/` URI使用这些文件（用`static_url_prefix`参数配置），Tornado从相同的目录使用`/favicon.ico`和`/robots.txt`。一个自定义的`StaticFileHandler`子类可以指定`static_handler_class`的设置。
+            * `settings`：传递给构造器的额外关键参数保存在`settings` dictionary里，在文档里通常称为"application settings"。`settings`用来自定义Tornado的各种变量（尽管一些例子中的丰富自定义设置可以通过重写`RequestHandler`子类实现）。一些应用也喜用`settings` dictionary这种方式给handler设定应用特殊的设置，而不用全局变量。Tornado的`settings`如下所述。
+                1. 通用设置
+                    * `autoreload`：如果此参数值为`True`，当任何资源文件改变时，服务器进程将会重启（详见[Debug mode and automatic reloading](http://tornado.readthedocs.org/en/stable/guide/running.html#debug-mode)）。此选项是Tornado 3.2的新特性，之前的功能实现是通过`debug`参数设定的。
+                    * `debug`：一些debug模式设置的简写（详见[Debug mode and automatic reloading](http://tornado.readthedocs.org/en/stable/guide/running.html#debug-mode)）。设置`debug=True`等同于`autoreload=True`，`compiled_template_cache=False`，`static_hash_cache=False`，`serve_traceback=True`。
+                    * `default_handler_class`和`default_handler_args`：如果没有找到其他的匹配，这个handler将使用。用来实现自定义的404页面（Tornado 3.2的新特性）。
+                    * `compress_response`：如果此参数值为`True`，文本格式的response将自动压缩（Tornado 4.0的新特性）。
+                    * `gzip`：`compress_response`的过时别名（从Tornado 4.0开始）。
+                    * `log_function`：此函数在每个request结束时调用来记录结果（在`RequestHandler`对象，用一个参数）。默认的实现方法是记录在模块的根日志，也可以重写`Application.log_request`来实现自定义。
+                    * `serve_traceback`：如果此参数值为`True`，默认的错误页将包含错误的traceback。这是Tornado 3.2的新特性，之前版本的此功能用`debug`参数控制。
+                    * `ui_modules`和`ui_methods`：设定`UIModule`的映射或template可用的UI方法。也可设置给一个模块、dictionary，或模块的一个列表，或dicts。
+                2. 认证和安全设置
+                    * `cookie_secret`：用`RequestHandler.get_secure_cookie`和`set_secure_cookie`给cookie签名。
+                    * `login_url`：如果用户未登录，`authenticated`装饰器将定向到此URL。可重写`RequestHandler.get_login_url`来自定义。
+                    * `xsrf_cookies`：如果此参数值为`True`，Tornado将启用[防止伪造跨站request](http://tornado.readthedocs.org/en/stable/guide/security.html#xsrf)。
+                    * `xsrf_cookie_version`：控制服务器产生的新的XSRF cookie的版本。通常是默认（支持的最高版本），但是在版本过渡时期，可能临时设置一个更低的值。这是Tornado 3.2.2的新特性。
+                    * `twitter_consumer_key`/`twitter_consumer_secret`/`friendfeed_consumer_key`/`friendfeed_consumer_secret`/`google_consumer_key`/`google_consumer_secret`/`facebook_api_key`/`facebook_secret`：在`tornado.auth`模块用来认证不同的API。
+                3. Template设置
+                    * `autoescape`：控制template的自动转义。可设置为空来禁用转义，或者设定一个所有的输出都会传递的函数名。默认是`xhtml_escape`，可用在每个template的基础上用`{% autoescape %}`命令改变。
+                    * `compiled_template_cache`：默认此参数值为`True`，如果为`False`，template将对每个request重编译。此选项是Tornado 3.2的新特性，之前的功能实现是通过`debug`参数设定的。
+                    * `template_path`：目录包含template文件，也可以重写`RequestHandler.get_template_path`来实现自定义。
+                    * `template_loader`：指定一个`tornado.template.BaseLoader`实例以实现自定义template的加载。如果此项设置已使用，可忽略`autoescape`和`template_path`设置，也可以重写`RequestHandler.create_template_loader`来实现自定义。
+                4. 静态文件设置
+                    * `static_hash_cache`：默认此参数值为`True`，如果为`False`，静态URL将对每个request重编译。此选项是Tornado 3.2的新特性，之前的功能实现是通过`debug`参数设定的。
+                    * `static_path`：静态文件的目录。
+                    * `static_url_prefix`：静态文件的URL前缀，默认为`"/static/"`。
+                    * `static_handler_class`/`static_handler_args`：可设置使用不同的handler处理静态文件，而不是默认的`tornado.web.StaticFileHandler`。如果设置了`static_handler_args`，一个目录的关键参数可传递给handler的`initialize`方法。
+            * `listen(port, address='', **kwargs)`：在给定的端口为应用启动HTTP服务器。这样为创建一个`HTTPServer`对象提供方便，调用它的监听方法。`HTTPServer.listen`不支持传递关键参数给`HTTPServer`构造器。高级用法（如多进程模式）不使用此方法，而采用创建一个`HTTPServer`和直接调用它的`TCPServer.bind`/`TCPServer.start`。注意在调用此方法后仍然需要调用`IOLoop.instance().start()`来启动服务器。
+            * `add_handlers(host_pattern, host_handlers)`：给handler列表添加给定的handler。主机模式依次按它们的添加顺序进行处理，Tornado会考虑所有匹配的模式。
+            * `reverse_url(name, *args)`：根据命名的`name`参数返回一个URL路径。handler作为命名的`URLSpec`被添加给`Application`。`URLSpec`正则的捕获组代替`args`参数，如果需要它们将被转化为string，用utf8编码，url转义。
+            * `log_request(handler)`：把已完成的HTTP request写日志。默认写在python根日志，`Application`的任一子类重写此方法可改变日志路径，或传递一个函数给`Application`的settings作为`log_function`。
+         + `tornado.web.URLSpec(pattern, handler, kwargs=None, name=None)`：指定URL和handler之间的映射。`tornado.web.url`可使用`URLSpec`类。
+            * `pattern`：匹配正则表达式。正则中的任何组合作为参数将传递给handler的`GET`/`POST`等方法。
+            * `handler`：被调用的`RequestHandler`的子类。
+            * `kwargs`（可选）：传递额外参数的一个dictionary给handler构造器。
+            * `name`（可选）：`Application.reverse_url`所使用的handler的名字。
+    * 装饰器
+         + `tornado.web.asynchronous(method)`：封装异步的request handler方法。使用`@gen.coroutine`而非`@asynchronous`是Tornado 3.1的新特性。
+            * 如果此方法也用`@gen.coroutine`装饰，此装饰器为非必需的。两个装饰器一起使用是合法但非必需的，要把`@asynchronous`放在首位。
+            * 此装饰器仅应用于HTTP动作方法，任何其他的方法未定义这种行为。此装饰器不会使一个方法异步，它告诉框架这个方法使异步的，方法有时的异步动作对于此装饰器是有用的。
+            * 如果给定了装饰器，当方法返回时，response未完成。它决定了request handler调用`self.finish()`来结束HTTP request。无此装饰器，当`GET`/`POST`方法返回时，request自动结束。
+         + `tornado.web.authenticated(method)`：用户已登录需要此装饰器来装饰方法，如果用户未登录将被定向到配置的`login url`。如果你用查询参数配置了`login url`，Tornado将假设你知道你在用它做什么；否则Tornado将加一个`next`参数，一旦你登录了，登录页知道发送哪个位置（页面）给你。
+         + `tornado.web.addslash(method)`：使用此装饰器给request路径添加一个缺失的跟踪的斜杠。例如，一个request用此装饰器从`/foo`定向到`/foo/`，你的request handler映射使用一个正则表达式，如`r'/foo/?'`用此装饰器来连接。
+         + `tornado.web.removeslash(method)`：使用此装饰器从request路径删除跟踪的斜杠。例如，一个request用此装饰器从`/foo`定向到`/foo/`，你的request handler映射使用一个正则表达式，如`r'/foo/*'`用此装饰器来连接。
+         + `tornado.web.stream_request_body(cls)`：应用`RequestHandler`子类类支持stream body。在`data_received`和异步的`prepare`之间有着巧妙的交互：调用`prepare`返回或yield后，可以在任何点首次调用`data_recieved`。
+            * `HTTPServerRequest.body`未定义，body参数不会包括在`RequestHandler.get_argument`里。
+            * 当已读取request header而不是读取整个body后，调用`RequestHandler.prepare`。
+            * 子类必须定义`data_received(self, data)`方法：数据可用时可被调用零至多次。注意，如果request body为空，则不能调用`data_received`。
+            * `prepare`和`data_received`可返回`Future`对象。例如，`@gen.coroutine`的例子，不会调用下一个方法直到这些`Future`对象已完成。
+            * 读取整个body后将调用正常的HTTP方法（`POST`/`PUT`，等等）。 
 
 
 --EOF--
