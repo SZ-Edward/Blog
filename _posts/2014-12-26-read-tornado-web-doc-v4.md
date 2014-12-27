@@ -5,7 +5,6 @@ description: Tornado, Web framework, tornado.web, document
 ---
 几个月没写代码，发现[Tornado已经出v4.0版本](http://tornado.readthedocs.org/en/latest/web.html)了，时间过得真快，要把这几个月时间补回来喽。
 
-#Web framework
 - ###tornado.web - RequestHandler & Application classes
 
     * `tornado.web`提供一个简单的具有异步功能的web框架，允许扩展大量的连接，是长轮询的理想实现。
