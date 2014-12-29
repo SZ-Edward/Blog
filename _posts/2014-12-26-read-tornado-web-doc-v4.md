@@ -131,6 +131,42 @@ description: Tornado, Web framework, tornado.web, document
             * 子类必须定义`data_received(self, data)`方法：数据可用时可被调用零至多次。注意，如果request body为空，则不能调用`data_received`。
             * `prepare`和`data_received`可返回`Future`对象。例如，`@gen.coroutine`的例子，不会调用下一个方法直到这些`Future`对象已完成。
             * 读取整个body后将调用正常的HTTP方法（`POST`/`PUT`，等等）。 
+    * 其他的东西
+         + `tornado.web.HTTPError(status_code, log_message=None, *args, **kwargs)`：一个异常将转化为HTTP错误response。一旦它自动结束了当前的函数，调用`RequestHandler.send_error`抛出一个`HTTPError`是方便的选择。用`HTTPError`自定义发送的response，可重写`RequestHandler.write_error`。
+             * status_code(int)：HTTP状态码。必须在`httplib.responses`里列出来，除非给定了`reason`这个关键参数。
+             * log_message(string)：用日志记录这个错误的信息（不会显示给用户除非`Application`的settings在`debug`模式）。也可能包含`%s`形式的占位符，将用剩余的位置参数填充。
+             * reason (string)：关键参数。HTTP "reason"表达用`status_code`在状态行传递。一般从`status_code`自动决定，但是也可用一个非标准的数字码。
+         + `tornado.web.Finish`：一个结束request但不用产生错误response的异常。当`RequestHandler`里抛出`Finish`，request将结束（如果还没有调用则调用`RequestHandler.finish`）。但是发出的response不会被修改，也不会调用处理错误的方法（包括`RequestHandler.write_error`）。实现自定义错误页比重写`write_error`更方便。
+         + `tornado.web.MissingArgumentError(arg_name)`：`RequestHandler.get_argument`抛出的异常。这是`HTTPError`的子类，所以如果未捕获，一个400的响应码将代替500（并不会记录stack跟踪）。这是Tornado 3.1的新特性。
+         + `tornado.web.UIModule(handler)`：在页面上可重用的、模块化的UI单元。UI模块通常执行额外的查询，并包括额外的CSS和JavaScript在输出页面上，在页面渲染上自动插入。
+             * `render(*args, **kwargs)`：重写子类来返回此模块的输出。
+             * `embedded_javascript()`：返回一个JavaScript string镶嵌在页面里。
+             * `javascript_files()`：返回此模块需要的一个JavaScript文件的列表。
+             * `embedded_css()`：返回一个CSS string镶嵌在页面里。
+             * `css_files()`：返回此模块需要的一个CSS文件的列表。
+             * `html_head()`：返回一个CSS string放置在<head>元素里。
+             * `html_body()`：返回一个HTML string放置在<body>元素里。
+             * `render_string(path, **kwargs)`：渲染一个template并当作一个string返回。
+         + `tornado.web.ErrorHandler(application, request, **kwargs)`：为所有的request生成一个带`status_code`的错误reponse。
+         + `tornado.web.FallbackHandler(application, request, **kwargs)`：一个封装了其他HTTP服务器回调的`RequestHandler`。这个fallback是接受一个`HTTPServerRequest`的可调用对象，例如一个`Application`或`tornado.wsgi.WSGIContainer`。一台服务器上同时用Tornado `RequestHandler`和WSGI，这样做最有用。
+         + `tornado.web.RedirectHandler(application, request, **kwargs)`：为所有的request把客户端定向到给定的URL，应提供关键参数`url`给handler。
+         + `tornado.web.StaticFileHandler(application, request, **kwargs)`：一个简单的处理目录里静态内容的handler。如果把关键参数`static_path`传递给`Application`，`StaticFileHandler`会自动配置。此handler可用来`static_url_prefix`/`static_handler_class`/`static_handler_args`实现自定义。此handler构造器需要一个`path`参数，这个参数指定来处理内容的根目录。注意，正则里匹配组合要解析`GET`方法里参数`path`的值（这里与前述的构造器参数不同，详见[`URLSpec`](http://tornado.readthedocs.org/en/stable/web.html#tornado.web.URLSpec)）。为最大化浏览器缓存的效率，这个类支持各版本的url，默认用参数`?v=`表示。如果给定了一个版本，Tornado告诉浏览器无限期缓存此文件。`make_static_url`用来构造带版本的url（也可用`RequestHandler.static_url`）。此handler主要用在开发中，以及服务于轻量级的文件处理；对于高流量的服务，使用一台专用的静态文件服务器更有效率（例如nginx或Apache）。推荐用HTTP `Accept-Ranges`机制返回部分的文件（因为一些浏览器需要此功能存在于HTML5的audio或video中），但是此handler不能用于处理占用太大内存的文件。
+             * `子类注意事项`：此类可用子类扩展，但由于静态url是类方法生成的而非实例方法，继承模式也有些不同。重写类方法时确保用`@classmethod`装饰器，实例方法可用`self.path`、`self.absolute_path`和`self.modified`属性。子类只可重写此部分讨论的方法，重写其他方法容易产生错误，由于与`compute_etag`还有其他方法联系紧密，重写`StaticFileHandler.get`特别容易出问题。要改变静态url生成方式（例如匹配其他服务器的行为或CDN），重写`make_static_url`/`parse_url_path`/`get_cache_time`，抑或`get_version`。要替代文件系统的所有交互（例如处理数据库中的静态内容），重写`get_content`/`get_content_size`/`get_modified_time`/`get_absolute_path`/`validate_absolute_path`。Tornado 3.1的改变：添加了子类的许多方法。
+             * `compute_etag()`：基于url版本号设置`Etag` header。允许对缓存的版本进行有效的`If-None-Match`的检查，向部分的response发送正确的`Etag`（例如同样的`Etag`作为完整的文件）。这是Tornado 3.1的新特性。
+             * `set_headers()`：给response设置内容和缓存header。这是Tornado 3.1的新特性。
+             * `should_return_304()`：如果header说明应返回304则返回`True`。这是Tornado 3.1的新特性。
+             * `get_absolute_path(root, path)`：返回相对于`root`参数的`path`参数的绝对路径。`root`参数是`StaticFileHandler`配置的路径（大多数例子是`Application`的settings中`static_path`参数）。此类方法可用子类重写，默认返回文件系统路径，但是，也可用其他的string，只要子类重写的`get_content`是唯一且可理解的。这是Tornado 3.1的新特性。
+             * `validate_absolute_path(root, absolute_path)`：验证并返回绝对路径。`root`参数是`StaticFileHandler`配置的路径，`path`参数是`get_absolute_path`的结果。这个实例方法在处理request期间调用，所有它可能抛出`HTTPError`或用类似`RequestHandler.redirect`的方法（重定向以阻止进一步的处理后返回空），如此为缺失的文件生成404错误。此方法可在返回前修改路径，但是，请注意，任何这样的更改都不会被`make_static_url`理解。在实例方法中，此方法的结果可用作`self.absolute_path`。这是Tornado 3.1的新特性。
+             * `get_content(abspath, start=None, end=None)`：根据给定的绝对路径，提取请求的资源中的内容。此方法可被子类重写，注意，它的签名不同于其他可重写的方法（无`settings`设置）。这样做是为了确保`abspath`参数能够作为缓存键支持自身。此方法可返回一个byte string或byte string的迭代器，后者适用于大文件，有助于减少内存碎片。Tornado 3.1的新特性。
+             * `get_content_version(abspath)`：根据给定的路径返回资源的版本string。此类方法可被子类重写，默认实现是文件内容的hash。这是Tornado 3.1的新特性。
+             * `get_content_size()`：根据给定的路径返回资源的总大小。此方法可被子类重写，这是Tornado 3.1的新特性。Tornado 4.0的改变：通常不调用此方法，仅当请求了部分的结果。
+             * `get_modified_time()`：返回`self.absolute_path`最近一次修改的时间。此方法可被子类重写，返回一个`datetime`对象或空。这是Tornado 3.1的新特性。
+             * `get_content_type()`：返回request的`Content-Type` header。这是Tornado 3.1的新特性。
+             * `set_extra_headers(path)`：子类给response添加额外的header。
+             * `get_cache_time(path, modified, mime_type)`：重写以实现自定义缓存控制，返回正秒数，使结果可缓存，时间量或零到标记资源可缓存的未指定的时间量（视浏览器的heuristics算法）。默认用`v`参数为请求的资源返回缓存十年有效期。
+             * `make_static_url(settings, path, include_version=True)`：用给定的路径返回一个带版本号的url。此方法可被子类重写（但是请注意，这是一个类方法而非实例方法）。子类仅需要实现签名`make_static_url(cls, settings, path)`，其他的根据参数可通过`static_url`传递（非标准）。`settings`参数是`Application.settings`的dictionary，`path`参数是请求的静态路径，返回的url是当前主机的相对路径。`include_version`参数决定了生成的url是否包含对应给定的路径的文件的版本号hash的query string。
+             * `parse_url_path(url_path)`：将静态URL路径转化为文件系统路径。`url_path`参数用删除的`static_url_prefix`参数组成了URL，返回值是文件系统与`static_url`的相对路径。此方法与`make_static_url`可逆。
+             * `get_version(settings, path)`：生成静态URL中的版本string。`settings`参数是`Application.settings`的dictionary，`path`参数是请求文件系统上资源位置的相对路径，如果未确定版本号，返回值应为string或空。Tornado 3.1的改变：之前推荐此方法用子类重写，现更推荐`get_content_version`，因为它允许基类处理结果的缓存。
 
 
 --EOF--
