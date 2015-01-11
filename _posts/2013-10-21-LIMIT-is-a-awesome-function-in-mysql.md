@@ -16,7 +16,7 @@ LIMIT 子句可以被用于强制 SELECT 语句返回指定的记录数。LIMIT 
 如果只给定一个参数，它表示返回最大的记录行数目：      
 > SELECT * FROM table LIMIT 5;     //检索前 5 个记录行     
 
-//换句话说，LIMIT n 等价于 LIMIT 0,n。
+换句话说，LIMIT n 等价于 LIMIT 0,n。
 
 如果做一个分页插件，使用LIMIT来做查询会相当方便。例如：
 
