@@ -14,7 +14,7 @@ description: mysql, error 1045, solution
 估计是密码错误，想了半天也没想起来密码，那么干脆改密码吧！
 
 
-1. 使用命令
+使用命令
 
     mysqladmin -u root password 'new-password'
 
@@ -24,7 +24,7 @@ description: mysql, error 1045, solution
       
     error: 'Access denied for user 'root'@'localhost' (using password: YES)'
 
-2. 于是，使用命令
+于是，使用命令
 
     netstat -anop | grep 3306
 
@@ -34,7 +34,7 @@ description: mysql, error 1045, solution
 
 本机mysql改过配置，一般执行`/etc/init.d/mysqld stop`即可。或者推荐用`service mysql stop`，不行就用暴力方式`kill -9 mysqld 进程号`。
 
-3. 接着执行命令
+接着执行命令
 
     mysqld_safe --user=mysql --skip-grant-tables --skip-networking & 
 
