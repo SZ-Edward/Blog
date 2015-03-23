@@ -13,5 +13,7 @@ description: 英语，学习，李笑来
 
 君子豹变，历经时间的磨砺。
 
+附上此书链接[人人都能用英语](http://xiaolai.gitbooks.io/everyone-can-use-english/content/)
+
 
 --EOF--
